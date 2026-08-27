@@ -1,10 +1,22 @@
 "use client"
 import ExpenseCard from "@/components/ExpenseCard";
+import { supabase } from "@/lib/supabase";
 import { useState } from "react";
+import { useEffect } from "react";
 
 export default function ExpenseTracker(props) {
     const [category, setCategory] = useState("")
     const [amount, setAmount] = useState(0)
+
+    useEffect(() => {
+        testFetch();
+    }, []);
+
+    async function testFetch() {
+        const { data, error } = await supabase.from("transactions").select("*");
+        console.log("data:", data)
+        console.log("error:", error)
+    }
 
     return (
         <div>
@@ -21,10 +33,11 @@ export default function ExpenseTracker(props) {
             />
 
             <button onClick={() => console.log(category, amount)}>
-                Display                
+                Display
             </button>
 
             <ExpenseCard category={category} amount={amount} />
         </div>
     );
 }
+
