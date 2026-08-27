@@ -1,7 +1,6 @@
-import ExpenseCard from "@/components/ExpenseCard";
-
+import ExpenseTracker from "@/components/ExpenseTracker";
 export default function Home() {
   return (
-    <ExpenseCard category="Groceries" amount="$45.00" />
+    <ExpenseTracker />
   );
 }
