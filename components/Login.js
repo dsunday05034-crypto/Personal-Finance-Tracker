@@ -2,7 +2,7 @@
 import { supabase } from "@/lib/supabase"
 import { useState } from "react"
 
-export default function SignUp() {
+export default function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -20,20 +20,18 @@ export default function SignUp() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            
-            {/* disable the button when signup request is currently in progress, waiting for supabase to respond
-            so users don't end up wth an error while trying to create account, or duplicate account */}
+
             <button disabled={isSubmitting} onClick={async () => {
                 setIsSubmitting(true)
-                const { data, error } = await supabase.auth.signUp({
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
-                    password: password,
+                    password: password
                 });
                 console.log(data, error)
                 setIsSubmitting(false)
             }}>
-                SignUp
+                SignIn
             </button>
-        </div>
+        </div >
     );
 }
