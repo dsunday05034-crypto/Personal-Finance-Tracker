@@ -1,6 +1,10 @@
 import ExpenseTracker from "@/components/ExpenseTracker";
+import SignUp from "@/components/SignUp";
 export default function Home() {
   return (
-    <ExpenseTracker />
+    <div>
+      <ExpenseTracker />
+      <SignUp />
+    </div>  
   );
 }
