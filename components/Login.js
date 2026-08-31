@@ -27,7 +27,6 @@ export default function Login() {
                     email: email,
                     password: password
                 });
-                console.log(data, error)
                 setIsSubmitting(false)
             }}>
                 SignIn

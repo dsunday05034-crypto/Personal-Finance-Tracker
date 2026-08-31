@@ -1,6 +1,7 @@
 "use client"
 import ExpenseCard from "@/components/ExpenseCard";
 import { useState } from "react";
+import Logout from "@/components/Logout";
 
 export default function ExpenseTracker(props) {
     const [category, setCategory] = useState("")
@@ -25,6 +26,7 @@ export default function ExpenseTracker(props) {
             </button>
 
             <ExpenseCard category={category} amount={amount} />
+            <Logout />
         </div>
     );
 }

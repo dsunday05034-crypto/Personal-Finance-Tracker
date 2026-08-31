@@ -17,13 +17,9 @@ export default function Home() {
     return () => subscription.unsubscribe();
   }, []);
 
-  console.log("current session:", session)
-
   return (
     <div>
-      <ExpenseTracker />
-      <SignUp />
-      <Login />
+      { session ? <ExpenseTracker /> : (<><SignUp /><Login /></>)}
     </div>
   );
 }

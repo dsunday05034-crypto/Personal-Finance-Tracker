@@ -29,7 +29,6 @@ export default function SignUp() {
                     email: email,
                     password: password,
                 });
-                console.log(data, error)
                 setIsSubmitting(false)
             }}>
                 SignUp
