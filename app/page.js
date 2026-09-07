@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <div>
-      { session ? <ExpenseTracker /> : (<><SignUp /><Login /></>)}
+      { session ? <ExpenseTracker session={session} /> : (<><SignUp /><Login /></>)}
     </div>
   );
 }
