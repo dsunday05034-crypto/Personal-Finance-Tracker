@@ -69,6 +69,14 @@ export default function ExpenseTracker(props) {
 
             <button disabled={isSubmitting} onClick={async () => {
                 setIsSubmitting(true)
+                const { data: existing } = await supabase.from("categories").select("*").eq("user_id", props.session.user.id).eq("name", category);
+                if (existing.length === 0) {
+                    await supabase.from("categories").insert({
+                        user_id: props.session.user.id,
+                        name: category,
+                    });
+                }
+
                 const converted = amount * rate;
                 const { data, error } = await supabase.from("transactions").insert({
                     category: category,
