@@ -32,6 +32,21 @@ export default function ExpenseTracker(props) {
         if (!error) fetchTransaction();
     }
 
+    async function updateTransaction(id, newAmount, newCurrency) {
+        const rate = mockRates[newCurrency];
+        const converted = newAmount * rate;
+
+        const { error } = await supabase.from("transactions").update({
+            amount: newAmount,
+            currency: newCurrency,
+            exchange_rate: rate,
+            converted_amount: converted,
+            updated_at: new Date(),
+        }).eq("id", id);
+
+        if (!error) fetchTransaction();
+    }
+
     return (
         <div>
             <input
@@ -78,6 +93,9 @@ export default function ExpenseTracker(props) {
                     />
                     <button onClick={() => deleteTransaction(t.id)}>
                         Delete
+                    </button>
+                    <button onClick={() => updateTransaction(t.id, 999, "USD")}>
+                        Test update
                     </button>
                 </div>
             ))}
