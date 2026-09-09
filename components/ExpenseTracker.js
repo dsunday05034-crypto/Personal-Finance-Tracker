@@ -9,18 +9,27 @@ export default function ExpenseTracker(props) {
     const [amount, setAmount] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [transactions, setTransactions] = useState([]);
+    const [currency, setCurrency] = useState("NGN");
+
+    const mockRates = { NGN: 0.00065, USD: 1, EUR: 1.08 };
+    const rate = mockRates[currency];
 
     useEffect(() => {
         fetchTransaction();
     }, []);
 
     async function fetchTransaction() {
-        const { data, error } = await supabase.from("transactions").select("*");
+        const { data, error } = await supabase.from("transactions").select("*").is("deleted_at", null);
         if (error) {
             console.log(error);
         } else {
             setTransactions(data)
         }
+    }
+
+    async function deleteTransaction(id) {
+        const { error } = await supabase.from("transactions").update({ deleted_at: new Date() }).eq("id", id);
+        if (!error) fetchTransaction();
     }
 
     return (
@@ -37,12 +46,23 @@ export default function ExpenseTracker(props) {
                 onChange={(e) => setAmount(e.target.value)}
             />
 
+            <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+                <option value="NGN">NGN</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+            </select>
+
             <button disabled={isSubmitting} onClick={async () => {
                 setIsSubmitting(true)
+                const converted = amount * rate;
                 const { data, error } = await supabase.from("transactions").insert({
                     category: category,
                     amount: amount,
                     user_id: props.session.user.id,
+                    currency: currency,
+                    exchange_rate: rate,
+                    converted_amount: converted,
+                    base_currency: "USD",
                 });
                 setIsSubmitting(false)
                 fetchTransaction();
@@ -51,7 +71,15 @@ export default function ExpenseTracker(props) {
             </button>
 
             {transactions.map((t) => (
-                <ExpenseCard key={t.id} category={t.category} amount={t.amount} />
+                <div key={t.id}>
+                    <ExpenseCard
+                        category={t.category}
+                        amount={t.amount}
+                    />
+                    <button onClick={() => deleteTransaction(t.id)}>
+                        Delete
+                    </button>
+                </div>
             ))}
             <Logout />
         </div>
