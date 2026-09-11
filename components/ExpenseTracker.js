@@ -10,19 +10,33 @@ export default function ExpenseTracker(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [transactions, setTransactions] = useState([]);
     const [currency, setCurrency] = useState("NGN");
+    const [defaultCurrency, setDefaultCurrency] = useState("USD");
 
     const [rates, setRates] = useState({});
     const rate = rates[currency];
 
     useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    useEffect(() => {
         fetch("/api/exchange-rate")
-        .then((res) => res.json())
-        .then((data) => setRates(data));
+            .then((res) => res.json())
+            .then((data) => setRates(data));
     }, []);
 
     useEffect(() => {
         fetchTransaction();
     }, []);
+
+    async function fetchProfile() {
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("default_currency")
+            .eq("id", props.session.user.id)
+            .single();
+        if (!error) setDefaultCurrency(data.default_currency);    
+    }
 
     async function fetchTransaction() {
         const { data, error } = await supabase.from("transactions").select("*").is("deleted_at", null);
@@ -91,7 +105,7 @@ export default function ExpenseTracker(props) {
                     currency: currency,
                     exchange_rate: rate,
                     converted_amount: converted,
-                    base_currency: "USD",
+                    base_currency: defaultCurrency,
                 });
                 setIsSubmitting(false)
                 fetchTransaction();

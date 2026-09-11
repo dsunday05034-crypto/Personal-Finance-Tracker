@@ -27,6 +27,16 @@ export default function Login() {
                     email: email,
                     password: password
                 });
+                if (!error) {
+                    const { data: existingProfile } = await supabase
+                        .from("profiles")
+                        .select("id")
+                        .eq("id", data.user.id)
+                        .single()
+                    if (!existingProfile) {
+                        await supabase.from("profiles").insert({});
+                    }
+                }
                 setIsSubmitting(false)
             }}>
                 SignIn
