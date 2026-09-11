@@ -11,8 +11,14 @@ export default function ExpenseTracker(props) {
     const [transactions, setTransactions] = useState([]);
     const [currency, setCurrency] = useState("NGN");
 
-    const mockRates = { NGN: 0.00065, USD: 1, EUR: 1.08 };
-    const rate = mockRates[currency];
+    const [rates, setRates] = useState({});
+    const rate = rates[currency];
+
+    useEffect(() => {
+        fetch("/api/exchange-rate")
+        .then((res) => res.json())
+        .then((data) => setRates(data));
+    }, []);
 
     useEffect(() => {
         fetchTransaction();
@@ -33,8 +39,8 @@ export default function ExpenseTracker(props) {
     }
 
     async function updateTransaction(id, newAmount, newCurrency) {
-        const rate = mockRates[newCurrency];
-        const converted = newAmount * rate;
+        const rate = rates[newCurrency];
+        const converted = newAmount / rate;
 
         const { error } = await supabase.from("transactions").update({
             amount: newAmount,
@@ -77,7 +83,7 @@ export default function ExpenseTracker(props) {
                     });
                 }
 
-                const converted = amount * rate;
+                const converted = amount / rate;
                 const { data, error } = await supabase.from("transactions").insert({
                     category: category,
                     amount: amount,
