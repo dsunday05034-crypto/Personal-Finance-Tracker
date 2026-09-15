@@ -2,6 +2,7 @@
 import ExpenseTracker from "@/components/ExpenseTracker";
 import SignUp from "@/components/SignUp";
 import Login from "@/components/Login";
+import Dashboard from "@/components/Dashboard";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 export default function Home() {
@@ -19,7 +20,12 @@ export default function Home() {
 
   return (
     <div>
-      { session ? <ExpenseTracker session={session} /> : (<><SignUp /><Login /></>)}
+      { session ? (
+        <>
+          <Dashboard session={session} />
+          <ExpenseTracker session={session} />
+        </>
+      ) : (<><SignUp /><Login /></>)}
     </div>
   );
 }
